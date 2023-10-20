@@ -1,0 +1,17 @@
+Step_1: Download CDL files for a specific county using this example code in R. This code retrieves CDL data for Ada County (FIPS code = 16001). Insert your own FIPS code 
+
+  #Install Packages
+  install.packages ("CropScapeR")
+
+  #Library Packages 
+  library(CropScapeR)
+  library(sf)
+  
+  #install CDL files into Data Folder for Ada or Canyon county 
+  adacounty <- GetCDLData(
+  aoi = 16027, #find state 2 digit and county 5 digit FIPS code for Ada County #16001 for Canyon County #16027
+  year = 2022, #input year
+  type = 'f',
+  format = 'raster',
+  save_path = ('/file_location/ada2022.tif') # input new file name
+  ) 
