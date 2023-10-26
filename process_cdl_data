@@ -1,0 +1,44 @@
+#install packages
+!pip install rasterio
+
+#import
+import rasterio
+from rasterio.transform import from_origin
+import numpy as np
+import pandas as pd
+
+# load the extracted cdl file
+with rasterio.open('/content/ada2022.tif') as src:
+    cdl_data = src.read(1)
+
+#classify by crop type 
+crop_types = {
+    0: 'Not Crop Land',
+    1: 'Corn',
+    2: 'Cotton',
+    ....]
+
+classified_data = {}
+for code, crop_type in crop_types.items():
+    mask = (cdl_data == code)
+    classified_data[crop_type] = mask
+
+# calculate area and pixel count
+pixel_area = abs(src.transform[0] * src.transform[4])
+
+crop_areas = {}
+crop_pixel_counts = {}
+for crop_type, mask in classified_data.items():
+    area_pixels = mask.sum()
+    area_square_meters = area_pixels * pixel_area
+    crop_areas[crop_type] = area_square_meters
+    crop_pixel_counts[crop_type] = area_pixels
+# view results as crops per area 
+print("Crop Areas (in square meters):")
+for crop_type, area in crop_areas.items():
+    print(f"{crop_type}: {area:.2f} sq.m")
+
+# view results as crops per pixel
+print("\nCrop Pixel Counts:")
+for crop_type, count in crop_pixel_counts.items():
+    print(f"{crop_type}: {count} pixels")
