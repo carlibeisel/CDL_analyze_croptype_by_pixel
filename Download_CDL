@@ -1,17 +1,43 @@
 Step_1: Download CDL files for a specific county using this example code in R. This code retrieves CDL data for Ada County (FIPS code = 16001). Insert your own FIPS code 
 
-  #Install Packages
-  install.packages ("CropScapeR")
+#Library Packages 
+library(CropScapeR)
+library(sf)
+library(raster)
+library(ggplot2)
 
-  #Library Packages 
-  library(CropScapeR)
-  library(sf)
+# Read the shapefile into R
+spdata <- sf::st_read("/Users/dbeisel/Desktop/albers_projection/LBRB_ALBERS.shp")
+
+ggplot () +
+    geom_sf(data=spdata) #plot shapefile
+
+#Empty list to store clipped cdl data
+clipped_cdl_data_list <- list()
+
+#loop through the years from 2008 to 2022, extract CDL data, clip to shape file 
+for (year in 2007:2022) {
+
+  #convert the year to a character string
+  year_str<- as.character(year)
   
-  #install CDL files into Data Folder for Ada or Canyon county 
-  adacounty <- GetCDLData(
-  aoi = 16027, #find state 2 digit and county 5 digit FIPS code for Ada County #16001 for Canyon County #16027
-  year = 2022, #input year
-  type = 'f',
-  format = 'raster',
-  save_path = ('/file_location/ada2022.tif') # input new file name
-  ) 
+  #Get CDL data for the current year  
+  CDLData<- GetCDLData (aoi = sf::st_bbox(spdata), year = year_str, type ='b')
+  
+  #clip the CDL data to the shapefile
+  clipped_cdl_data <- raster::mask(CDLData, spdata)
+  
+  #Add the clipped CDL data to the list
+  clipped_cdl_data_list [[year_str]] <- clipped_cdl_data
+  
+  #create name for extracted raster
+  filename<- paste("/Users/dbeisel/Desktop/Data/CDL data/CDLData_",year_str,".tif")
+  
+  #export raster to current directory
+ raster::writeRaster(clipped_cdl_data_list[[year_str]], filename, format= "GTIFF")
+  
+  #save_path = ('/Users/dbeisel/Desktop/DATA/CDL data') 
+   }
+
+#CHECK: Plot CDL data for given year 
+raster::plot(clipped_cdl_data_list[['2018']])
