@@ -1,16 +1,22 @@
-#install packages
+## ---------------------- ##
+# Step 1: Import Libraries and Install Programs
+## ---------------------- ##
 !pip install rasterio
-
-#import
 import rasterio
 from rasterio.transform import from_origin
 import numpy as np
 import pandas as pd
 
+## ---------------------- ##
+# Step 2: Load the CDL Layer from Google Drive
+## ---------------------- ##
 # load the extracted cdl file
 with rasterio.open('/content/ada2022.tif') as src:
     cdl_data = src.read(1)
 
+## ---------------------- ##
+# Step 3: Classify Crop Types
+## ---------------------- ##
 #classify by crop type 
 crop_types = {
     0: 'Not Crop Land',
@@ -18,14 +24,18 @@ crop_types = {
     2: 'Cotton',
     ....]
 
+## ---------------------- ##
+# Step 4: categorize the data by crop type
+## ---------------------- ##
 classified_data = {}
 for code, crop_type in crop_types.items():
     mask = (cdl_data == code)
     classified_data[crop_type] = mask
 
-# calculate area and pixel count
+## ---------------------- ##
+# Step 5: Calculate Area and Pixel Count
+## ---------------------- ##
 pixel_area = abs(src.transform[0] * src.transform[4])
-
 crop_areas = {}
 crop_pixel_counts = {}
 for crop_type, mask in classified_data.items():
@@ -38,12 +48,16 @@ print("Crop Areas (in square meters):")
 for crop_type, area in crop_areas.items():
     print(f"{crop_type}: {area:.2f} sq.m")
 
-# view results as crops per pixel
+## ---------------------- ##
+# Step 6: View Results
+## ---------------------- ##
 print("\nCrop Pixel Counts:")
 for crop_type, count in crop_pixel_counts.items():
     print(f"{crop_type}: {count} pixels")
 
-#compare sum of crop area to actual area
+## ---------------------- ##
+# Step 7: Compare sum of crop area to actual area
+## ---------------------- ##
 error_message = 'Calculated area is larger than what actually exists'
 area_of_tv = 3.5495e12 #sq meters #fact check
 
@@ -56,3 +70,20 @@ calculated_crop_area() #runs the function I made
 total = sum(total)
 
 assert total > area_of_tv, error_message
+
+## ---------------------- ##
+#Step 8: Create a bar graph to show data
+## ---------------------- ##
+
+#extract crop types and crop areas from data
+
+crop_types_array = list(crop_areas.keys()) # extracts crop type('keys') from crop_areas dictionary
+crop_areas_array = list(crop_areas.values()) # extracts areas ('values') from crop_areas dictionary
+
+plt.bar (crop_types_array, crop_areas_array, color = 'skyblue') #creates bar chart for crop type V crop area
+plt.xlabel('Crop Type') # creates x labels
+plt.ylabel('Crop Area (square meters)') # creates y lables.
+plt.title('Treasure Valley 2022') #creates title
+plt.xticks(rotation=45, ha="right") #slants the x labels so they are legible
+
+plt.show() # plots graph
