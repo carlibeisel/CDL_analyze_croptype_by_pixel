@@ -72,18 +72,17 @@ total = sum(total)
 assert total > area_of_tv, error_message
 
 ## ---------------------- ##
-#Step 8: Create a bar graph to show data
+#Step 8: Export the file
 ## ---------------------- ##
 
-#extract crop types and crop areas from data
+name = list(crop_areas.keys())
+area = list(crop_areas.values())
+pixel = list(crop_pixel_counts.values())
 
-crop_types_array = list(crop_areas.keys()) # extracts crop type('keys') from crop_areas dictionary
-crop_areas_array = list(crop_areas.values()) # extracts areas ('values') from crop_areas dictionary
+# create a DataFrame
+cdl_data = {'Crop Type': name,
+        'Crop Areas (sq meters)': area, 'Crop Pixel Count': pixel}
+df = pd.DataFrame(cdl_data)
+print(df)
 
-plt.bar (crop_types_array, crop_areas_array, color = 'skyblue') #creates bar chart for crop type V crop area
-plt.xlabel('Crop Type') # creates x labels
-plt.ylabel('Crop Area (square meters)') # creates y lables.
-plt.title('Treasure Valley 2022') #creates title
-plt.xticks(rotation=45, ha="right") #slants the x labels so they are legible
-
-plt.show() # plots graph
+df.to_csv('/content/drive/MyDrive/Data/CDL Data/cdl_2022.csv', index=False) #change date
