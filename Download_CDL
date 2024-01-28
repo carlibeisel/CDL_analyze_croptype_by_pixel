@@ -3,44 +3,24 @@
 # This code retrieves CDL data for Treasure Valley using a shapefile  
 ##_________________________________________________________________________________________
 
-# Download library packages 
+#Install Packages
+install.packages ("CropScapeR")
 library(CropScapeR)
 library(sf)
-library(raster)
-library(ggplot2)
 
-# Read the shapefile into R for Treasure Valley, Idaho
+# read the shapefile into R
+# shapefile must be in Albers Projection
 spdata <- sf::st_read("/Users/dbeisel/Desktop/albers_projection/LBRB_ALBERS.shp")
 
 ggplot () +
-    geom_sf(data=spdata) #plot shapefile
+  geom_sf(data=spdata) #plot shapefile
 
-#Empty list to store clipped cdl data
-clipped_cdl_data_list <- list()
+#install CDL files into Data Folder for Ada or Canyon county 
+tv <- GetCDLData(
+  aoi =  sf::st_bbox(spdata),
+  year = 2006, 
+  type = 'b',
+  format = 'raster',
+  save_path = ('/Users/dbeisel/Desktop/DATA/CDL_data/tv_2006.tif') # input new file name
+) 
 
-#loop through the years from 2008 to 2022, extract CDL data, clip to shape file 
-  for (year in 2007:2022) {
-
-#convert the year to a character string
-  year_str<- as.character(year)
-  
-#Get CDL data for the current year  
-  CDLData<- GetCDLData (aoi = sf::st_bbox(spdata), year = year_str, type ='b')
-  
-#clip the CDL data to the shapefile
-  clipped_cdl_data <- raster::mask(CDLData, spdata)
-  
-#Add the clipped CDL data to the list
-  clipped_cdl_data_list [[year_str]] <- clipped_cdl_data
-  
-#create name for extracted raster
-  filename<- paste("/Users/dbeisel/Desktop/Data/CDL data/CDLData_",year_str,".tif")
-  
-#export raster to current directory
- raster::writeRaster(clipped_cdl_data_list[[year_str]], filename, format= "GTIFF")
-  
-   save_path = ('/Users/dbeisel/Desktop/DATA/CDL data') 
-   }
-
-#CHECK: Plot CDL data for given year to make sure shape matches expectations  
-raster::plot(clipped_cdl_data_list[['2018']])
