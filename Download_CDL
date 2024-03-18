@@ -8,19 +8,14 @@ install.packages ("CropScapeR")
 library(CropScapeR)
 library(sf)
 
-# read the shapefile into R
-# shapefile must be in Albers Projection
-spdata <- sf::st_read("/Users/dbeisel/Desktop/albers_projection/LBRB_ALBERS.shp")
-
-ggplot () +
-  geom_sf(data=spdata) #plot shapefile
+# read the shapefile into R, must be in Albers Projection
+spdata <- sf::st_read("/Users/dbeisel/Desktop/DATA/GIS Shapefiles/LBRB_albers/LBRB_albers.shp")
 
 #install CDL files into Data Folder for Ada or Canyon county 
 tv <- GetCDLData(
-  aoi =  sf::st_bbox(spdata),
+  aoi = spdata, 
   year = 2006, 
   type = 'b',
   format = 'raster',
-  save_path = ('/Users/dbeisel/Desktop/DATA/CDL_data/tv_2006.tif') # input new file name
+  save_path = ('/Users/dbeisel/Desktop/DATA/CDL_data/lbrb2006.tif') # input new file name
 ) 
-
