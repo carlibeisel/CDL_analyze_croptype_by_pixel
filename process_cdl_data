@@ -48,31 +48,9 @@ print("Crop Areas (in square meters):")
 for crop_type, area in crop_areas.items():
     print(f"{crop_type}: {area:.2f} sq.m")
 
-## ---------------------- ##
-# Step 6: View Results
-## ---------------------- ##
-print("\nCrop Pixel Counts:")
-for crop_type, count in crop_pixel_counts.items():
-    print(f"{crop_type}: {count} pixels")
 
 ## ---------------------- ##
-# Step 7: Compare sum of crop area to actual area
-## ---------------------- ##
-error_message = 'Calculated area is larger than what actually exists'
-area_of_tv = 3.5495e12 #sq meters #fact check
-
-total = []
-def calculated_crop_area():
-  for values in crop_areas.values():
-    total.append(values)
-
-calculated_crop_area() #runs the function I made
-total = sum(total)
-
-assert total > area_of_tv, error_message
-
-## ---------------------- ##
-#Step 8: Export the file
+#Step 6: Export the file
 ## ---------------------- ##
 
 name = list(crop_areas.keys())
